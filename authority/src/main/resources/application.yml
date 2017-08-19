@@ -1,0 +1,51 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.0.101:3306/rms?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    username: root
+    password: Aqq1!50796726
+    initialSize: 2
+    minIdle: 2
+    maxActive: 10
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 3600000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select current_timestamp()
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    #filters: config
+    #connectionProperties: config.decrypt=true
+  application:
+    name: youngsun-authority
+
+mybatis:
+    type-aliases-package: com.youngsun.authority.entity
+    mapper-locations: classpath:/com/youngsun/authority/mapper/*.xml
+mapper:
+    mappers:
+      - com.youngsun.common.mapper.MyMapper
+    not-empty: false
+    identity: SELECT REPLACE(UUID(),'-','')
+    order: BEFORE
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
+server:
+  port: 5000
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://192.168.0.101:1000/eureka
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youngsun.authority.mapper.RoleMapper">
+<!--
+namespace:名称空间;指定为接口的全类名
+id：唯一标识
+resultType：返回值类型
+#{id}：从传递过来的参数中取出id值
+public Employee getEmpById(Integer id);
+/**
+     * 资源名称
+     */
+    private String permissionName;
+    /**
+     * 资源类型：menu,button,
+     */
+    private String type;
+    /**
+     * 访问url地址
+     */
+    private String url;
+    /**
+     * 权限代码字符串
+     */
+    private String percode;
+    /**
+     * 父结点id
+     */
+    private String parentId;
+    /**
+     * 父结点id列表串
+     */
+    private String parentIds;
+    /**
+     * 排序号
+     */
+    private String sortString;
+    /**
+     * 是否可用,1：可用，0不可用
+     */
+    private Boolean permissionAvailable;
+ -->
+	<resultMap id="basicResult" type="com.youngsun.authority.dto.BasicDto">
+		<id column = "id" property="id"/>
+		<result property="insertDate" column="t_insert_date"/>
+		<result property="upDateDate" column="t_update_date"/>
+		<result property="insertUserId" column="t_insert_userid"/>
+		<result property="upDateUserId" column="t_update_userid"/>
+		<result property="belongTo" column="t_belong"/>
+	</resultMap>
+
+	<resultMap id = "rolePermissionResultMap" type="com.youngsun.authority.dto.RolePermissionDto" extends="basicResult">
+		<result column = "name" property = "name"/>
+		<result column = "available" property = "available"/>
+		<collection property="permissionDto" ofType="com.youngsun.authority.dto.PermissionDto">
+			<id column = "id" property = "id"/>
+			<result property = "permissionName" column = "name"/>
+			<result property = "type" column = "type"/>
+			<result property = "url" column = "url"/>
+			<result property = "percode" column = "percode"/>
+			<result property = "parentId" column = "parent_id"/>
+			<result property = "parentIds" column = "parent_ids"/>
+			<result property = "sortString" column = "sort_string"/>
+			<result property = "permissionAvailable" column = "available"/>
+			<result property="insertDate" column="t_insert_date"/>
+			<result property="upDateDate" column="t_update_date"/>
+			<result property="insertUserId" column="t_insert_userid"/>
+			<result property="upDateUserId" column="t_update_userid"/>
+			<result property="belongTo" column="t_belong"/>
+		</collection>
+	</resultMap>
+ 	<select id="getAllRoleWithPermissionByUserId" resultMap = "rolePermissionResultMap">
+		SELECT
+			r.name roleName,
+			r.available,
+			r.insertDate,
+			r.upDateDate,
+			r.insertUserId,
+			r.upDateUserId,
+			r.belongTo,
+			p.name,
+			p.type,
+			p.url,
+			p.percode,
+			p.parent_id,
+			p.parent_ids,
+			p.sort_string,
+			p.available,
+			p.insertDate,
+			p.upDateDate,
+			p.insertUserId,
+			p.upDateUserId,
+			p.belongTo
+		FROM
+			t_role r
+		JOIN t_user_role ur ON ur.role_id = r.id
+		JOIN t_role_permission rp ON r.id = rp.role_id
+		JOIN t_permission p ON p.id = rp.permission_id
+		<where>
+			ur.user_id = #{userId}
+		</where>
+			
+ 	</select>
+ 
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youngsun.user.mapper.UserMapper">
+	<resultMap type="com.youngsun.user.dto.UserDto" id="userDtoMap">
+		<id column="userId" property="id"/>
+		<result column="popId" property="userOrgPositionId"/>
+		<result column="orgId" property="orgId"/>
+		<result column="orgId" property="orgId"/>
+		<result column="orgName" property="orgName"/>
+		<result column="positionId" property="posId"/>
+		<result column="positionName" property="posName"/>
+		<result column="userName" property="name"/>
+		<result column="sex" property="sex"/>
+		<result column="idCard" property="idCard"/>
+		<result column="phone" property="phone"/>
+		<result column="nickName" property="nickName"/>
+		<result column="image" property="image"/>
+		<result column="status" property="status"/>
+		<result column="email" property="email"/>
+	</resultMap>
+<!-- 
+namespace:名称空间;指定为接口的全类名
+id：唯一标识
+resultType：返回值类型
+#{id}：从传递过来的参数中取出id值
+public Employee getEmpById(Integer id);
+ -->
+ 
+ 	<!--public Map<Integer, Employee> getEmpByLastNameLikeReturnMap(String lastName);  -->
+ 	<select id="getAll" resultMap="userDtoMap">
+		SELECT
+			p.id userId,
+			pop.id popId,
+			o.id orgId,
+			o.t_name orgName,
+			pos.id positionId,
+			pos.t_name positionName,
+			p.t_name userName,
+			p.t_sex sex,
+			p.t_idCard idCard,
+			p.t_phone phone,
+			p.t_nickName nickName,
+			p.t_image image,
+			p.t_status status,
+			p.t_email email
+		FROM
+			 t_user p
+		LEFT JOIN t_user_org_pos pop ON p.id = pop.t_pId
+		LEFT JOIN t_org o ON o.id = pop.t_orgid
+		LEFT JOIN t_position pos ON pos.id = pop.t_posid
+ 	</select>
+ 
+ 	<select id="getAllByPositoinId" resultType="com.youngsun.user.entity.UserEntity">
+		SELECT
+		*
+		FROM
+		t_user
+		WHERE
+		id IN (
+		SELECT
+		t_pid
+		FROM
+		t_user_org_pos
+		WHERE
+		t_posid IN
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		)
+ 	</select>
+ 
+</mapper>
